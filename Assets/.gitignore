@@ -1,0 +1,3 @@
+# Ignore JNO's mod tools
+ModTools/
+ModTools.meta
