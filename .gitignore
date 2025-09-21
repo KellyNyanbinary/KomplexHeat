@@ -7,6 +7,9 @@
 .idea/
 .vsconfig
 
+# Ignore JNO mod files
+ModAssetBundles
+
 .utmp/
 /[Ll]ibrary/
 /[Tt]emp/
