@@ -10,7 +10,7 @@ assignees: ''
 ## Context
 *Why does this issue exist? What problem or feature does it address?*
 
-## Tasks
+## Implementation
 - [ ] *Task 1*
 - [ ] *Task 2*
 - [ ] *Task 3*
@@ -18,3 +18,6 @@ assignees: ''
 ## Acceptance Criteria
 - [ ] *Clear, testable acceptance criterion*
 - [ ] *Another*
+
+## Additional Context
+*Add any other context about the problem here.*
