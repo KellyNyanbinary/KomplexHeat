@@ -18,7 +18,7 @@ KomplexHeat is a mod for Jundroo's [Juno: New Origins](https://simplerockets.com
 
 ## License
 
-This project’s source code is licensed under the [GNU General Public License v3.0](LICENSE).
+This project’s source code is licensed under the [MIT license](LICENSE).
 
 > [!important]
 >
