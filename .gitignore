@@ -10,6 +10,11 @@
 # Ignore JNO mod files
 ModAssetBundles
 
+# Ignore plugins
+/Assets/Plugins/**/*.dll
+/Assets/Plugins/**/*.pdb
+/Assets/Plugins/**/*.mdb
+
 .utmp/
 /[Ll]ibrary/
 /[Tt]emp/

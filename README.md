@@ -18,13 +18,15 @@ KomplexHeat is a mod for Jundroo's [Juno: New Origins](https://simplerockets.com
 
 ## License
 
-This project’s source code is licensed under the [MIT license](LICENSE).
+This project’s source code is licensed under the [MIT License](LICENSE).
 
 > [!important]
+> 
+> This software is provided "as is", without warranty of any kind.
 >
-> This license applies only to the original source code written for KomplexHeat. Unity and Juno: New Origins remain proprietary software, and their engine libraries, assemblies, and any automatically generated skeleton code are not covered by this license.
+> This license applies only to the original source code written for KomplexHeat. Unity and Juno: New Origins remain proprietary software, and their engine libraries, assemblies, and any automatically generated skeleton code are not covered by this license. Any third-party plugins and libraries included and referenced are distributed under their original licenses, which are provided in their respective source and documentation.
 >
-> To build or use this mod, you must have a licensed copy of Unity and Juno: New Origins.  
+> To build or use this mod, you must have a licensed copy of Unity, Juno: New Origins, and any applicable plugins.
 
 ## Installation
 
@@ -44,3 +46,8 @@ This project’s source code is licensed under the [MIT license](LICENSE).
 4. Follow the JNO modding guide to import the JNO mod tools.
     1. In Unity, Assets -> Import Package -> Custom Package, and import the mod tools at `JNO installation directory/ModTools/SimpleRockets2_ModTools.unitypackage`. The default location for this on Windows is `C:\Program Files (x86)\Steam\steamapps\common\SimpleRockets2\ModTools\SimpleRockets2_ModTools.unitypackage`.
     2. Initialize the mod in Unity via SimpleRockets 2 -> Mod Builder Window -> Start Creating Mod.
+5. Install the Harmony Unity plugin.
+    1. Download the newest "Fat" version of [Harmony plugin](https://github.com/pardeike/Harmony/releases). 
+    2. Copy the file `net472/0Harmony.dll` into `Assets/Plugins/Harmony`.
+    3. Optionally, you may also include `net472/0Harmony.xml` in `Assets/Plugins/Harmony`.
+    4. Focus on Unity. Unity should start importing the plugin automatically.
