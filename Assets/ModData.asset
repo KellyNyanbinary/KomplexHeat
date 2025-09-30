@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: -1366777262, guid: c37b925f2b4978342b2e0b83a8fa404a, type: 3}
   m_Name: ModData
   m_EditorClassIdentifier: 
-  _assemblies: []
+  _assemblies:
+  - 0Harmony.dll
+  - KomplexHeat.dll
   _author: KellyNyanbinary
   _description: KomplexHeat is a mod that expands the JNO's heat system.
   _loadPriority: 1000

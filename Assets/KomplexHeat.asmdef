@@ -1,0 +1,8 @@
+{
+	"name": "KomplexHeat",
+	"references": [
+		"UnityEngine.UI",
+		"Unity.TextMeshPro",
+		"Unity.Mathematics"
+	]
+}
