@@ -17,6 +17,9 @@ ModAssetBundles
 /Assets/Plugins/**/*.meta
 /Assets/Plugins/**/*.xml
 
+# Ignore decompiled
+Decompiled
+
 .utmp/
 /[Ll]ibrary/
 /[Tt]emp/
