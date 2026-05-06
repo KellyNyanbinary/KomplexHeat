@@ -14,6 +14,8 @@ ModAssetBundles
 /Assets/Plugins/**/*.dll
 /Assets/Plugins/**/*.pdb
 /Assets/Plugins/**/*.mdb
+/Assets/Plugins/**/*.meta
+/Assets/Plugins/**/*.xml
 
 .utmp/
 /[Ll]ibrary/
