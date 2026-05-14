@@ -116,7 +116,7 @@ namespace KomplexHeat
         {
             if (e.Scene == SceneNames.Flight)
             {
-                GameObject.Instantiate(this.ResourceLoader.LoadAsset<GameObject>("Assets/Content/TestSphere.prefab"));
+                this.AttachVizzyHeatSources(Game.Instance.FlightScene.CraftNode.CraftScript);
             }
             // else if (e.Scene == SceneNames.Menu)
             // {
@@ -126,6 +126,18 @@ namespace KomplexHeat
             //         Game.Instance.UserInterface.Transform.Find("GameMenu"));
             //     menuButtonScript.transform.SetAsFirstSibling();
             // }
+        }
+        
+        private void AttachVizzyHeatSources(ModApi.Craft.ICraftScript craftScript)
+        {
+            var partScripts = craftScript.Transform.GetComponentsInChildren<Assets.Scripts.Craft.Parts.PartScript>();
+            foreach (var partScript in partScripts)
+            {
+                if (!partScript.HasFlightProgram || partScript.GetComponent<VizzyHeatSource>() != null) continue;
+                
+                var heatSource = partScript.gameObject.AddComponent<VizzyHeatSource>();
+                partScript.OnEnterHeatSource(heatSource);
+            }
         }
 
         /// <summary>
