@@ -17,10 +17,12 @@ namespace KomplexHeat
         {
             if (_flightProgramScript == null || _flightProgramScript.FlightProgram == null)
                 return;
-
+            
             var powerConsumption = _powerConsumptionField != null
                 ? (float)_powerConsumptionField.GetValue(_flightProgramScript) * PowerMultiplier
                 : 0;
+            
+            UnityEngine.Debug.Log($"Power consumption for {_partScript.name}: {powerConsumption} W");
 
             HeatController.AddHeat(_partScript, powerConsumption);
         }

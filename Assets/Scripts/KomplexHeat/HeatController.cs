@@ -32,10 +32,13 @@ namespace KomplexHeat
 
         void IFlightFixedUpdate.FlightFixedUpdate(in FlightFrameData frame)
         {
+            Debug.Log($"Game tick {frame.FrameCount}, applying heat to {PendingWatts.Count} parts");
+            
             foreach (var (part, watts) in PendingWatts)
             {
-                var tempIncrease = watts * frame.DeltaTime / (part.Data.Mass * SpecificHeatOfAl);
+                var tempIncrease = watts * frame.DeltaTime / (part.Data.Mass * SpecificHeatOfAl) * 100;
                 part.Temperature += tempIncrease;
+                Debug.Log($"Added {watts} W to part {part.name} (ID: {part.GetInstanceID()}). New temperature: {part.Temperature}");
             }
 
             PendingWatts.Clear();
@@ -43,10 +46,14 @@ namespace KomplexHeat
 
         public static void AddHeat(PartScript part, float watts)
         {
+            Debug.Log($"Queued {watts} W to part {part.name} (ID: {part.GetInstanceID()})");
+
             if (PendingWatts.ContainsKey(part))
                 PendingWatts[part] += watts;
             else
                 PendingWatts[part] = watts;
+            
+            Debug.Log($"Queue length: {PendingWatts.Count}");
         }
     }
 }
