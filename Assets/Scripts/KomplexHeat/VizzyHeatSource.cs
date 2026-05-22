@@ -6,27 +6,34 @@ using ModApi.GameLoop.Interfaces;
 
 namespace KomplexHeat
 {
-    public class VizzyHeatSource : MonoBehaviourBase, IHeatSource, IFlightStart, IFlightFixedUpdate
+    public class VizzyHeatSource : MonoBehaviourBase, IHeatSource, IFlightStart, IFlightUpdate
     {
         private const float RunningTemperature = 340f; // Kelvin for ~67 degrees above ambient
         private const float HeatTransferCoefficient = 5f;
 
         private FlightProgramScript _flightProgramScript;
 
-        void IFlightFixedUpdate.FlightFixedUpdate(in FlightFrameData frame)
+        protected void OnDestroy()
         {
-            if (_flightProgramScript == null || _flightProgramScript.FlightProgram == null)
-            {
-                Temperature = 0f;
-                return;
-            }
-
-            Temperature = RunningTemperature;
+            // Remove dangling reference.
+            var partScript = GetComponentInParent<PartScript>();
+            partScript?.OnExitHeatSource(this);
         }
 
         void IFlightStart.FlightStart(in FlightFrameData frame)
         {
             _flightProgramScript = GetComponentInParent<FlightProgramScript>();
+        }
+
+        void IFlightUpdate.FlightUpdate(in FlightFrameData frame)
+        {
+            if (_flightProgramScript == null || _flightProgramScript.FlightProgram == null)
+            {
+                Temperature = 0f; // Temporary value
+                return;
+            }
+
+            Temperature = RunningTemperature;
         }
 
         float IHeatSource.GetHeatTransferRate(PartScript partScript)
