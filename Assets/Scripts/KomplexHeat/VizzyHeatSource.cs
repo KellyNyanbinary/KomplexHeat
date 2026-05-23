@@ -41,7 +41,8 @@ namespace KomplexHeat
 
             if (_powerConsumptionField.FieldType != typeof(float))
                 throw new InvalidOperationException(
-                    $"Expected _powerConsumption to be a float but found {_powerConsumptionField.FieldType} in {_flightProgramScript.GetType().FullName}.");
+                    $"Expected _powerConsumption to be a float but found {_powerConsumptionField.FieldType} in " +
+                    $"{_flightProgramScript.GetType().FullName}.");
         }
 
         private void ApplyHeat(in FlightFrameData frame)
