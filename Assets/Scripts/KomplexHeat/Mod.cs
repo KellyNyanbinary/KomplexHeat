@@ -114,10 +114,10 @@ namespace KomplexHeat
         /// <param name="e">The <see cref="ModApi.Scenes.Events.SceneEventArgs"/> instance containing the event data.</param>
         private void OnSceneLoaded(object sender, ModApi.Scenes.Events.SceneEventArgs e)
         {
-            if (e.Scene == SceneNames.Flight)
-            {
-                this.AttachVizzyHeatSources(Game.Instance.FlightScene.CraftNode.CraftScript);
-            }
+            if (e.Scene != SceneNames.Flight) return;
+            
+            new GameObject("KomplexHeat_HeatController").AddComponent<HeatController>();
+            this.AttachVizzyHeatSources(Game.Instance.FlightScene.CraftNode.CraftScript);
             // else if (e.Scene == SceneNames.Menu)
             // {
             //     var menuButtonScript = Game.Instance.UserInterface.BuildUserInterfaceFromResource<MainMenuModButtonScript>(
@@ -135,8 +135,7 @@ namespace KomplexHeat
             {
                 if (!partScript.HasFlightProgram || partScript.GetComponent<VizzyHeatSource>() != null) continue;
                 
-                var heatSource = partScript.gameObject.AddComponent<VizzyHeatSource>();
-                partScript.OnEnterHeatSource(heatSource);
+                partScript.gameObject.AddComponent<VizzyHeatSource>();
             }
         }
 
