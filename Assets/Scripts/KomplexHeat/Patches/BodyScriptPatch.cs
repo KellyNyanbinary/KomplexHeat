@@ -37,26 +37,46 @@ namespace KomplexHeat.Patches
     ///     </code>
     ///     We're getting rid of the <c>partScript.Temperature = 288.706f</c>.
     /// </summary>
-    [HarmonyPatch(typeof(BodyScript), "UpdatePartTemperatures")]
+    [HarmonyPatch(typeof(BodyScript), "UpdatePartTemperatures")] // private, so nameof won't work
     internal static class BodyScriptPatch
     {
+        private const float OccludedTemperature = 288.706f; // what BodyScript hard-resets occluded parts to
+
+        // TODO: write Unity EditMode NUnit tests for Transpiler
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            var setter = (typeof(PartScript).GetProperty("Temperature")
-                          ?? throw new InvalidOperationException("Could not find property PartScript.Temperature"))
-                .SetMethod;
+            var setter = AccessTools.PropertySetter(typeof(PartScript), nameof(PartScript.Temperature)) ??
+                         throw new InvalidOperationException(
+                             "KomplexHeat: Could not find method PartScript.set_Temperature");
 
             // The ldc.r4 + callvirt pair uniquely identifies the temperature assignment. ldc.r4 288.706f alone
-            // can match against other instances of 288.706f in BodyScript, and set_Temperature is called again
+            // can match against other instances of OccludedTemperature in BodyScript, and set_Temperature is called again
             // later in UpdatePartTemperatures. Together they match only the occluded part temperature reset.
-            // The leading ldloc.s is included, so the matched index starts at the first of the three
+            // The leading ldloc* is included, so the matched index starts at the first of the three
             // instructions to remove.
-            var matcher = new CodeMatcher(instructions).MatchStartForward(
-                    new CodeMatch(OpCodes.Ldloc_S),
-                    new CodeMatch(OpCodes.Ldc_R4, 288.706f),
-                    new CodeMatch(i => i.opcode == OpCodes.Callvirt && (MethodInfo)i.operand == setter)
-                )
-                .RemoveInstructions(3);
+            var pattern = new[]
+            {
+                new CodeMatch(i => i.IsLdloc()),
+                new CodeMatch(OpCodes.Ldc_R4, OccludedTemperature),
+                new CodeMatch(i =>
+                    i.opcode == OpCodes.Callvirt && i.operand is MethodInfo methodInfo && methodInfo == setter)
+            };
+
+            var uniquenessPattern =
+                pattern[1..]; // drop the ldloc* to check only that the ldc.r4 + set_Temperature pair is unique
+
+            var matcher = new CodeMatcher(instructions).MatchStartForward(pattern);
+            if (matcher.IsInvalid)
+                throw new InvalidOperationException(
+                    "KomplexHeat: Could not find the occluded part temperature reset in BodyScript.UpdatePartTemperatures. The patch may be incompatible with the current game version.");
+
+            // Assert uniqueness of the matched instructions, or else we might be matching the wrong instructions.
+            var secondMatcher = matcher.Clone().Advance(pattern.Length).MatchStartForward(uniquenessPattern);
+            if (secondMatcher.IsValid)
+                throw new InvalidOperationException(
+                    "KomplexHeat: Found multiple matches for the occluded part temperature reset in BodyScript.UpdatePartTemperatures. The patch may be incompatible with the current game version.");
+
+            matcher.RemoveInstructions(pattern.Length);
 
             return matcher.InstructionEnumeration();
         }
