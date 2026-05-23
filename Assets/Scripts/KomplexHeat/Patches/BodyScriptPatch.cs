@@ -19,8 +19,8 @@ namespace KomplexHeat.Patches
     ///     IL_0150: callvirt     instance void Assets.Scripts.Craft.Parts.PartScript::set_Temperature(float32)
     ///     IL_0155: br           IL_03bb
     ///     </code>
-    ///     The surrounding control flow (the <c>IsOccluded</c> check and the branch/continue skipping the non-occluded
-    ///     branch) is left intact, so occluded parts simply receive no temperature update from the game, allowing
+    ///     The surrounding control flow (the <c>IsOccluded</c> check and the non-occluded branch) is left intact,
+    ///     so occluded parts are no longer reset and no longer skipped, allowing
     ///     <see cref="HeatController" /> to manage their temperature.
     ///     The surrounding decompiled code by ILSpy for reference:
     ///     <code>
@@ -44,6 +44,7 @@ namespace KomplexHeat.Patches
         private const float OccludedTemperature = 288.706f; // what BodyScript hard-resets occluded parts to
 
         // TODO: write Unity EditMode NUnit tests for Transpiler
+        [HarmonyTranspiler]
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var setter = AccessTools.PropertySetter(typeof(PartScript), nameof(PartScript.Temperature)) ??
@@ -53,7 +54,7 @@ namespace KomplexHeat.Patches
             // The ldc.r4 + callvirt pair uniquely identifies the temperature assignment. ldc.r4 OccludedTemperature
             // alone can match against other instances of OccludedTemperature in BodyScript, and set_Temperature is
             // called again later in UpdatePartTemperatures. Together they match only the occluded part temperature
-            // reset. The leading ldloc* is included, so the matched index starts at the first of the three instructions
+            // reset. The leading ldloc* is included, so the matched index starts at the first of the four instructions
             // to remove. The trailing br is included, so the rest of the temperature logic that was originally skipped
             // is run.
             var pattern = new[]
