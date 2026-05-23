@@ -12,11 +12,12 @@ namespace KomplexHeat.Patches
     ///     Harmony transpiler patch for <see cref="BodyScript.UpdatePartTemperatures" />.
     ///     By default, the game hard-resets any occluded part's temperature to 288.706 K every tick, preventing heat
     ///     from accumulating. This conflicts with KomplexHeat's heat accumulation logic, so this patch removes that
-    ///     assignment by surgically deleting the three IL instructions that implement it:
+    ///     assignment by surgically deleting the four IL instructions that implement it:
     ///     <code>
     ///     IL_0149: ldloc.s      partScript
     ///     IL_014b: ldc.r4       288.706
     ///     IL_0150: callvirt     instance void Assets.Scripts.Craft.Parts.PartScript::set_Temperature(float32)
+    ///     IL_0155: br           IL_03bb
     ///     </code>
     ///     The surrounding control flow (the <c>IsOccluded</c> check and the branch/continue skipping the non-occluded
     ///     branch) is left intact, so occluded parts simply receive no temperature update from the game, allowing
@@ -35,7 +36,7 @@ namespace KomplexHeat.Patches
     ///         ...
     ///     }
     ///     </code>
-    ///     We're getting rid of the <c>partScript.Temperature = 288.706f</c>.
+    ///     We're getting rid of the <c>partScript.Temperature = 288.706f;</c> and <c>continue;</c>.
     /// </summary>
     [HarmonyPatch(typeof(BodyScript), "UpdatePartTemperatures")] // private, so nameof won't work
     internal static class BodyScriptPatch
@@ -53,13 +54,15 @@ namespace KomplexHeat.Patches
             // alone can match against other instances of OccludedTemperature in BodyScript, and set_Temperature is
             // called again later in UpdatePartTemperatures. Together they match only the occluded part temperature
             // reset. The leading ldloc* is included, so the matched index starts at the first of the three instructions
-            // to remove.
+            // to remove. The trailing br is included, so the rest of the temperature logic that was originally skipped
+            // is run.
             var pattern = new[]
             {
                 new CodeMatch(i => i.IsLdloc()),
                 new CodeMatch(OpCodes.Ldc_R4, OccludedTemperature),
                 new CodeMatch(i =>
-                    i.opcode == OpCodes.Callvirt && i.operand is MethodInfo methodInfo && methodInfo == setter)
+                    i.opcode == OpCodes.Callvirt && i.operand is MethodInfo methodInfo && methodInfo == setter),
+                new CodeMatch(i => i.opcode == OpCodes.Br || i.opcode == OpCodes.Br_S)
             };
 
             var matcher = new CodeMatcher(instructions).MatchStartForward(pattern);
@@ -70,7 +73,7 @@ namespace KomplexHeat.Patches
 
             // Assert uniqueness of the matched instructions, or else we might be matching the wrong instructions.
             var uniquenessPattern =
-                pattern[1..]; // drop the ldloc* to check only that the ldc.r4 + set_Temperature pair is unique
+                pattern[1..^1]; // drop the ldloc* and br to check only that the ldc.r4 + set_Temperature pair is unique
             var secondMatcher = matcher.Clone().Advance(pattern.Length).MatchStartForward(uniquenessPattern);
             if (secondMatcher.IsValid)
                 throw new InvalidOperationException(
