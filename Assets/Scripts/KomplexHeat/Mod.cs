@@ -1,126 +1,87 @@
+using Assets.Scripts.Craft.Parts;
+using HarmonyLib;
+using ModApi.Common;
+using ModApi.Craft;
+using ModApi.Mods;
+using ModApi.Scenes;
+using ModApi.Scenes.Events;
+using UnityEngine;
+using Assembly = System.Reflection.Assembly;
+
 namespace KomplexHeat
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Assets.Scripts.Ui;
-    using ModApi.Common;
-    using ModApi.Scenes;
-    using ModApi.Ui;
-    using ModApi.Ui.Events;
-    using UnityEngine;
-    using HarmonyLib;
-
     /// <summary>
-    /// A singleton object representing this mod that is instantiated and initialize when the mod is loaded.
+    ///     A singleton object representing this mod that is instantiated and initialize when the mod is loaded.
     /// </summary>
-    public class Mod : ModApi.Mods.GameMod
+    public class Mod : GameMod
     {
         /// <summary>
-        /// Prevents a default instance of the <see cref="Mod"/> class from being created.
+        ///     Prevents a default instance of the <see cref="Mod" /> class from being created.
         /// </summary>
-        private Mod() : base()
+        private Mod()
         {
         }
 
         /// <summary>
-        /// Gets the singleton instance of the mod object.
+        ///     Gets the singleton instance of the mod object.
         /// </summary>
         /// <value>The singleton instance of the mod object.</value>
         public static Mod Instance { get; } = GetModInstance<Mod>();
 
         /// <summary>
-        /// Logs the specified message.
+        ///     Logs the specified message.
         /// </summary>
         /// <param name="message">The message to log.</param>
         /// <param name="context">The context.</param>
-        public void Log(string message, UnityEngine.Object context = null)
+        public void Log(string message, Object context = null)
         {
-            Debug.Log($"{this.ModInfo.Name}: {message}", context);
+            Debug.Log($"{ModInfo.Name}: {message}", context);
         }
 
         /// <summary>
-        /// Logs the specified error.
+        ///     Logs the specified error.
         /// </summary>
         /// <param name="error">The error to log.</param>
         /// <param name="context">The context.</param>
-        public void LogError(string error, UnityEngine.Object context = null)
+        public void LogError(string error, Object context = null)
         {
-            Debug.LogError($"{this.ModInfo.Name}: {error}", context);
+            Debug.LogError($"{ModInfo.Name}: {error}", context);
         }
 
         /// <summary>
-        /// Logs the specified warning.
+        ///     Logs the specified warning.
         /// </summary>
         /// <param name="warning">The warning to log.</param>
         /// <param name="context">The context.</param>
-        public void LogWarning(string warning, UnityEngine.Object context = null)
+        public void LogWarning(string warning, Object context = null)
         {
-            Debug.LogWarning($"{this.ModInfo.Name}: {warning}", context);
+            Debug.LogWarning($"{ModInfo.Name}: {warning}", context);
         }
 
         /// <summary>
-        /// Called when the mod is initialized.
+        ///     Called when the mod is initialized.
         /// </summary>
         protected override void OnModInitialized()
         {
-            Debug.Log($"Mod Initialized: {this.ModInfo.Name} - {this.ModInfo.Author} - {this.ModInfo.Version} - {this.ModInfo.LastUpdated}");
-            
-            new Harmony(this.ModInfo.Name).PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
+            Debug.Log(
+                $"Mod Initialized: {ModInfo.Name} - {ModInfo.Author} - {ModInfo.Version} - {ModInfo.LastUpdated}");
 
-            Game.Instance.SceneManager.SceneLoaded += this.OnSceneLoaded;
+            new Harmony(ModInfo.Name).PatchAll(Assembly.GetExecutingAssembly());
 
-            var ui = Game.Instance.UserInterface;
-            ui.UserInterfaceLoading += this.OnUserInterfaceLoading;
-            ui.UserInterfaceLoaded += this.OnUserInterfaceLoaded;
-            ui.AddBuildUserInterfaceXmlAction(this.BuildAllUserInterfaceXml);
-            ui.AddBuildUserInterfaceXmlAction(UserInterfaceIds.Flight.FlightSceneUI, this.BuildFlightSceneUserInterfaceXml);
-            ui.AddBuildUserInterfaceXmlAction(UserInterfaceIds.Flight.StagingPanel, this.BuildFlightSceneStagingPanelUserInterfaceXml);
+            Game.Instance.SceneManager.SceneLoaded += OnSceneLoaded;
         }
 
         /// <summary>
-        /// Called when every XML based user interface is being built.
-        /// </summary>
-        /// <param name="request">The build user interface XML request.</param>
-        private void BuildAllUserInterfaceXml(BuildUserInterfaceXmlRequest request)
-        {
-            this.Log($"Build all user interfaces XML callback: {request.UserInterfaceId}");
-            this.UpdateUIText(request, "SETTINGS", "*SETTINGS*");
-            this.UpdateUIText(request, "#STAGE#", "*STAGE*");
-        }
-
-        /// <summary>
-        /// Called when the flight scene staging panel XML based user interface is being built.
-        /// </summary>
-        /// <param name="request">The build user interface XML request.</param>
-        private void BuildFlightSceneStagingPanelUserInterfaceXml(BuildUserInterfaceXmlRequest request)
-        {
-            this.Log($"Build flight scene staging panel user interface XML callback: {request.UserInterfaceId}");
-            this.UpdateUIText(request, "STAGE", "#STAGE#");
-        }
-
-        /// <summary>
-        /// Called when the flight scene XML based user interface is being built.
-        /// </summary>
-        /// <param name="request">The build user interface XML request.</param>
-        private void BuildFlightSceneUserInterfaceXml(BuildUserInterfaceXmlRequest request)
-        {
-            this.Log($"Build flight scene user interface XML callback: {request.UserInterfaceId}");
-            this.UpdateUIText(request, "RELAUNCH", "*RELAUNCH*");
-        }
-
-        /// <summary>
-        /// Called when the scene is loaded.
+        ///     Called when the scene is loaded.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="ModApi.Scenes.Events.SceneEventArgs"/> instance containing the event data.</param>
-        private void OnSceneLoaded(object sender, ModApi.Scenes.Events.SceneEventArgs e)
+        /// <param name="e">The <see cref="ModApi.Scenes.Events.SceneEventArgs" /> instance containing the event data.</param>
+        private void OnSceneLoaded(object sender, SceneEventArgs e)
         {
             if (e.Scene != SceneNames.Flight) return;
-            
+
             new GameObject("KomplexHeat_HeatController").AddComponent<HeatController>();
-            this.AttachVizzyHeatSources(Game.Instance.FlightScene.CraftNode.CraftScript);
+            AttachVizzyHeatSources(Game.Instance.FlightScene.CraftNode.CraftScript);
             // else if (e.Scene == SceneNames.Menu)
             // {
             //     var menuButtonScript = Game.Instance.UserInterface.BuildUserInterfaceFromResource<MainMenuModButtonScript>(
@@ -130,54 +91,15 @@ namespace KomplexHeat
             //     menuButtonScript.transform.SetAsFirstSibling();
             // }
         }
-        
-        private void AttachVizzyHeatSources(ModApi.Craft.ICraftScript craftScript)
+
+        private void AttachVizzyHeatSources(ICraftScript craftScript)
         {
-            var partScripts = craftScript.Transform.GetComponentsInChildren<Assets.Scripts.Craft.Parts.PartScript>();
+            var partScripts = craftScript.Transform.GetComponentsInChildren<PartScript>();
             foreach (var partScript in partScripts)
             {
                 if (!partScript.HasFlightProgram || partScript.GetComponent<VizzyHeatSource>() != null) continue;
-                
+
                 partScript.gameObject.AddComponent<VizzyHeatSource>();
-            }
-        }
-
-        /// <summary>
-        /// Called when a user interface is loaded.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="UserInterfaceLoadedEventArgs"/> instance containing the event data.</param>
-        private void OnUserInterfaceLoaded(object sender, UserInterfaceLoadedEventArgs e)
-        {
-            this.Log($"User Interface Loaded: {e.UserInterfaceId}");
-        }
-
-        /// <summary>
-        /// Called when a user interface is loading.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="ModApi.Ui.Events.UserInterfaceLoadingEventArgs"/> instance containing the event data.</param>
-        private void OnUserInterfaceLoading(object sender, ModApi.Ui.Events.UserInterfaceLoadingEventArgs e)
-        {
-            this.Log($"User Interface Loading: {e.UserInterfaceId}");
-            this.UpdateUIText(e.BuildXmlRequest, "END FLIGHT", "*END FLIGHT*");
-        }
-
-        /// <summary>
-        /// Updates a UI text element, replacing one text string with another.
-        /// </summary>
-        /// <param name="buildXmlRequest">The build XML request.</param>
-        /// <param name="originalText">The original text.</param>
-        /// <param name="newText">The new text.</param>
-        private void UpdateUIText(BuildUserInterfaceXmlRequest buildXmlRequest, string originalText, string newText)
-        {
-            foreach (var element in buildXmlRequest.XmlDocument.Root.Descendants(XmlLayoutConstants.XmlNamespace + "TextMeshPro"))
-            {
-                var attribute = element.Attribute("text");
-                if (attribute != null && attribute.Value == originalText)
-                {
-                    attribute.SetValue(newText);
-                }
             }
         }
     }
