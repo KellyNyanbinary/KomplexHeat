@@ -7,28 +7,11 @@ using UnityEngine;
 
 namespace KomplexHeat
 {
-    public class HeatController : MonoBehaviour, IFlightFixedUpdate
+    public class HeatController : MonoBehaviourBase, IFlightFixedUpdate
     {
         private const float SpecificHeatOfAl = 897f; // https://en.wikipedia.org/wiki/Aluminium
 
         private static readonly Dictionary<PartScript, float> PendingWatts = new();
-
-        private void OnEnable()
-        {
-            Game.Loop.Register(this);
-        }
-
-        private void OnDisable()
-        {
-            Game.Loop.Unregister(this);
-        }
-
-        public bool StartMethodCalled { get; set; }
-
-        public new int GetInstanceID()
-        {
-            return base.GetInstanceID();
-        }
 
         void IFlightFixedUpdate.FlightFixedUpdate(in FlightFrameData frame)
         {
