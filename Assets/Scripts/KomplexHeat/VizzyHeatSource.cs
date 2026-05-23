@@ -16,13 +16,12 @@ namespace KomplexHeat
         private FieldInfo _powerConsumptionField;
 
         void IFlightFixedUpdate.FlightFixedUpdate(in FlightFrameData frame) => ApplyHeat(frame);
-
         void IFlightFixedUpdateWarp.FlightFixedUpdateWarp(in FlightFrameData frame) => ApplyHeat(frame);
 
         void IFlightStart.FlightStart(in FlightFrameData frame)
         {
-            _flightProgramScript = GetComponentInParent<FlightProgramScript>();
             _partScript = GetComponentInParent<PartScript>();
+            _flightProgramScript = _partScript?.GetModifier<FlightProgramScript>();
             _powerConsumptionField = _flightProgramScript?.GetType()
                 .GetField("_powerConsumption", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -42,8 +41,7 @@ namespace KomplexHeat
             if (_flightProgramScript == null || _flightProgramScript.FlightProgram == null)
                 return;
 
-            var powerConsumption = Convert.ToSingle(_powerConsumptionField.GetValue(_flightProgramScript)) *
-                                   PowerMultiplier;
+            var powerConsumption = (float)_powerConsumptionField.GetValue(_flightProgramScript) * PowerMultiplier;
 
             Debug.Log($"Power consumption for {_partScript.name}: {powerConsumption} W");
 
