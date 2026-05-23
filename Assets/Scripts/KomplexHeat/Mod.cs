@@ -10,6 +10,7 @@ namespace KomplexHeat
     using ModApi.Ui;
     using ModApi.Ui.Events;
     using UnityEngine;
+    using HarmonyLib;
 
     /// <summary>
     /// A singleton object representing this mod that is instantiated and initialize when the mod is loaded.
@@ -65,6 +66,8 @@ namespace KomplexHeat
         protected override void OnModInitialized()
         {
             Debug.Log($"Mod Initialized: {this.ModInfo.Name} - {this.ModInfo.Author} - {this.ModInfo.Version} - {this.ModInfo.LastUpdated}");
+            
+            new Harmony(this.ModInfo.Name).PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
 
             Game.Instance.SceneManager.SceneLoaded += this.OnSceneLoaded;
 
