@@ -62,15 +62,14 @@ namespace KomplexHeat.Patches
                     i.opcode == OpCodes.Callvirt && i.operand is MethodInfo methodInfo && methodInfo == setter)
             };
 
-            var uniquenessPattern =
-                pattern[1..]; // drop the ldloc* to check only that the ldc.r4 + set_Temperature pair is unique
-
             var matcher = new CodeMatcher(instructions).MatchStartForward(pattern);
             if (matcher.IsInvalid)
                 throw new InvalidOperationException(
                     "KomplexHeat: Could not find the occluded part temperature reset in BodyScript.UpdatePartTemperatures. The patch may be incompatible with the current game version.");
 
             // Assert uniqueness of the matched instructions, or else we might be matching the wrong instructions.
+            var uniquenessPattern =
+                pattern[1..]; // drop the ldloc* to check only that the ldc.r4 + set_Temperature pair is unique
             var secondMatcher = matcher.Clone().Advance(pattern.Length).MatchStartForward(uniquenessPattern);
             if (secondMatcher.IsValid)
                 throw new InvalidOperationException(

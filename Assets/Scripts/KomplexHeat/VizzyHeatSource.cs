@@ -4,7 +4,6 @@ using Assets.Scripts.Craft.Parts;
 using Assets.Scripts.Craft.Parts.Modifiers;
 using ModApi.GameLoop;
 using ModApi.GameLoop.Interfaces;
-using UnityEngine;
 
 namespace KomplexHeat
 {
@@ -51,8 +50,6 @@ namespace KomplexHeat
                 return;
 
             var powerConsumption = (float)_powerConsumptionField.GetValue(_flightProgramScript) * PowerMultiplier;
-
-            Debug.Log($"Power consumption for {_partScript.name}: {powerConsumption} W");
 
             HeatController.AddHeat(_partScript, powerConsumption);
         }

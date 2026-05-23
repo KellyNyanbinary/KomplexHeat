@@ -2,7 +2,6 @@
 using Assets.Scripts.Craft.Parts;
 using ModApi.GameLoop;
 using ModApi.GameLoop.Interfaces;
-using UnityEngine;
 
 namespace KomplexHeat
 {
@@ -28,18 +27,14 @@ namespace KomplexHeat
 
         private void ApplyPendingHeat(in FlightFrameData frame)
         {
-            Debug.Log($"Game tick {frame.FrameCount}, applying heat to {PendingWatts.Count} parts");
-
             foreach (var (part, watts) in PendingWatts)
             {
                 // Mass scaling can cause parts to have invalid mass. Skip to avoid unexpected temperature changes.
                 if (part.Data.Mass <= 0) continue;
-                
+
                 // Multiply by 100 to make it really obvious if it's working or not.
                 var tempIncrease = watts * frame.DeltaTime / (part.Data.Mass * SpecificHeatOfAl) * 100;
                 part.Temperature += tempIncrease;
-                Debug.Log(
-                    $"Added {watts} W to part {part.name} (ID: {part.GetInstanceID()}). New temperature: {part.Temperature}");
             }
 
             PendingWatts.Clear();
@@ -51,14 +46,10 @@ namespace KomplexHeat
         /// </summary>
         public static void AddHeat(PartScript part, float watts)
         {
-            Debug.Log($"Queued {watts} W to part {part.name} (ID: {part.GetInstanceID()})");
-
             if (PendingWatts.ContainsKey(part))
                 PendingWatts[part] += watts;
             else
                 PendingWatts[part] = watts;
-
-            Debug.Log($"Queue length: {PendingWatts.Count}");
         }
     }
 }
