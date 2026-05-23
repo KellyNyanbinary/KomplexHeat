@@ -8,6 +8,15 @@ using UnityEngine;
 
 namespace KomplexHeat
 {
+    /// <summary>
+    ///     Flight behavior that converts a Vizzy program's power consumption into heat on its host part each tick.
+    ///     <para>
+    ///         The game tracks power consumed by a running <see cref="FlightProgramScript" /> in a private
+    ///         <c>_powerConsumption</c> field. Because no public API exposes the per-frame consumed value,
+    ///         this class resolves and caches the field via reflection in <see cref="IFlightStart.FlightStart" /> and
+    ///         reads it each tick, forwarding the result to <see cref="HeatController.AddHeat" />.
+    ///     </para>
+    /// </summary>
     public class VizzyHeatSource : MonoBehaviourBase, IFlightStart, IFlightFixedUpdate, IFlightFixedUpdateWarp
     {
         private const float PowerMultiplier = 1000f; // The game uses kiloWatts, but we use Watts

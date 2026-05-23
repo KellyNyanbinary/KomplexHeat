@@ -50,8 +50,8 @@ namespace KomplexHeat.Patches
                              "KomplexHeat: Could not find method PartScript.set_Temperature");
 
             // The ldc.r4 + callvirt pair uniquely identifies the temperature assignment. ldc.r4 288.706f alone
-            // can match against other instances of OccludedTemperature in BodyScript, and set_Temperature is called again
-            // later in UpdatePartTemperatures. Together they match only the occluded part temperature reset.
+            // can match against other instances of OccludedTemperature in BodyScript, and set_Temperature is called
+            // again later in UpdatePartTemperatures. Together they match only the occluded part temperature reset.
             // The leading ldloc* is included, so the matched index starts at the first of the three
             // instructions to remove.
             var pattern = new[]
