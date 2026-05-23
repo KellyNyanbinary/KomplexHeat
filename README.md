@@ -5,13 +5,13 @@ KomplexHeat is a mod for Jundroo's [Juno: New Origins](https://simplerockets.com
 ## Features
 
 - Add heat generation to
-    - Rocket engines
-    - Jet engines
-    - Electric motors
-    - Servos
+    - (TODO) Rocket engines
+    - (TODO) Jet engines
+    - (TODO) Electric motors
+    - (TODO) Servos
     - Parts running Vizzy
 - Add Heat dissipation to
-    - (New) radiators
+    - (TODO) (New) radiators
 - Reuse existing Juno systems for
     - Heat conduction
     - Heat radiation
@@ -38,7 +38,7 @@ This project’s source code is licensed under the [MIT License](LICENSE).
 
 ## Development
 
-1. Follow the "Downloading Unity" section of [JNO modding guide](https://www.simplerockets.com/Forums/View/31506/).
+1. Follow the "Downloading Unity" section of the [JNO modding guide](https://www.simplerockets.com/Forums/View/31506/).
     1. Install Unity 2022.3.62f3 with macOS and Windows build components for mono.
     2. Install the C# IDE of your choice. (Unity defaults to Visual Studio; I use Rider.)
 2. [Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the KomplexHeat repository.
@@ -47,10 +47,10 @@ This project’s source code is licensed under the [MIT License](LICENSE).
     1. In Unity, Assets → Import Package → Custom Package, and import the mod tools at `JNO installation directory/ModTools/SimpleRockets2_ModTools.unitypackage`. The default location for this on Windows is `C:\Program Files (x86)\Steam\steamapps\common\SimpleRockets2\ModTools\SimpleRockets2_ModTools.unitypackage`.
     2. Initialize the mod in Unity via SimpleRockets 2 → Mod Builder Window → Start Creating Mod.
 5. Install the Harmony Unity plugin.
-    1. Download the newest "Fat" version of [Harmony plugin](https://github.com/pardeike/Harmony/releases). 
+    1. Download the newest "Fat" version of the [Harmony plugin](https://github.com/pardeike/Harmony/releases). 
     2. Copy the file `net472/0Harmony.dll` into `Assets/Plugins/Harmony`.
     3. Optionally, you may also include `net472/0Harmony.xml` in `Assets/Plugins/Harmony`.
-    4. Return to the Unity Editor, it should automatically begin importing the plugin.
+    4. Return to the Unity Editor, and it should automatically begin importing the plugin.
 6. Import the JNO game assemblies for IDE support.
     1. Copy the following DLLs from `JNO installation directory/SimpleRockets2_Data/Managed/` into `Assets/Plugins/Juno/`:
         - `SimpleRockets2.dll`
