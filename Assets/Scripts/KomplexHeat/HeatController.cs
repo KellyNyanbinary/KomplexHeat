@@ -21,6 +21,10 @@ namespace KomplexHeat
 
             foreach (var (part, watts) in PendingWatts)
             {
+                // Mass scaling can cause parts to have invalid mass. Skip to avoid unexpected temperature changes.
+                if (part.Data.Mass <= 0) continue;
+                
+                // Multiply by 100 to make it really obvious if it's working or not.
                 var tempIncrease = watts * frame.DeltaTime / (part.Data.Mass * SpecificHeatOfAl) * 100;
                 part.Temperature += tempIncrease;
                 Debug.Log(
