@@ -45,6 +45,12 @@ namespace KomplexHeat
         private FieldInfo _powerConsumptionField;
         private float _surfaceArea;
 
+        /// <summary>
+        ///     The heat flow rate from the core to the part's skin in the last tick, in watts.
+        ///     Positive means heat is flowing from core to skin.
+        /// </summary>
+        public float HeatFlowRate { get; private set; }
+
         void IFlightFixedUpdate.FlightFixedUpdate(in FlightFrameData frame) => Tick(frame);
         void IFlightFixedUpdateWarp.FlightFixedUpdateWarp(in FlightFrameData frame) => Tick(frame);
 
@@ -109,7 +115,7 @@ namespace KomplexHeat
 
             // Formula from https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling#Mathematical_formulation
             var flux = _heatCore.HeatTransferCoefficient * (_heatCore.Temperature - _partScript.Temperature);
-            var heatFlowRate = flux * _surfaceArea;
+            HeatFlowRate = flux * _surfaceArea;
 
             // If part heat capacity is invalid, the equilibrium temperature is a meaningless value, so the flow rate
             // cap is not enforced.
@@ -122,18 +128,18 @@ namespace KomplexHeat
                 var maxHeatFlowRateFromPart =
                     Mathf.Abs((_partScript.Temperature - equilibriumTemperature) * partSkinC / dt);
                 var maxHeatFlowRate = Mathf.Min(maxHeatFlowRateFromCore, maxHeatFlowRateFromPart);
-                heatFlowRate = Mathf.Max(Mathf.Min(heatFlowRate, maxHeatFlowRate), -maxHeatFlowRate);
+                HeatFlowRate = Mathf.Max(Mathf.Min(HeatFlowRate, maxHeatFlowRate), -maxHeatFlowRate);
             }
 
-            Mod.Instance.Log(
-                $"Heat transfer coefficient: {_heatCore.HeatTransferCoefficient}, flux: {flux}, heat flow rate: {heatFlowRate}, surface area: {_surfaceArea}, HeatCore temp: {_heatCore.Temperature}, Part temp: {_partScript.Temperature}");
+            // Mod.Instance.Log(
+            //     $"Heat transfer coefficient: {_heatCore.HeatTransferCoefficient}, flux: {flux}, heat flow rate: {HeatFlowRate}, surface area: {_surfaceArea}, HeatCore temp: {_heatCore.Temperature}, Part temp: {_partScript.Temperature}");
 
             // Allow the HeatCore to lose heat even if the part has no thermal mass, so tinkered parts with invalid
             // thermal mass don't get an infinitely hot HeatCore.
-            _heatCore.AddHeatPower(-heatFlowRate);
+            _heatCore.AddHeatPower(-HeatFlowRate);
 
             if (_partScript.ThermalMass <= 0) return; // guard against divide by 0 or negative number.
-            _partScript.Temperature += heatFlowRate * dt / (_partScript.ThermalMass * PartSpecificHeat);
+            _partScript.Temperature += HeatFlowRate * dt / (_partScript.ThermalMass * PartSpecificHeat);
         }
     }
 }
