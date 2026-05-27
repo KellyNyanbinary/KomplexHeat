@@ -5,7 +5,7 @@ namespace KomplexHeat
 {
     /// <summary>
     ///     The thermal core of a part, responsible for accumulating heat from various sources and applying it to the
-    ///     part's temperature each tick.
+    ///     core temperature each tick.
     ///     <para>
     ///         The thermal core is a separate thermal entity from the part's actual in-game temperature. The part's
     ///         in-game temperature is considered the skin temperature by KomplexHeat.

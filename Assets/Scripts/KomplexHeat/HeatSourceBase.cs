@@ -53,6 +53,7 @@ namespace KomplexHeat
             // HeatCore may end up orphaned if the subclass failed on OnFlightStart(), but that's an accepted tradeoff.
             _heatCore = gameObject.AddComponent<HeatCore>();
             _heatCore.ThermalMass = HeatCoreThermalMass;
+            _heatCore.Temperature = _partScript.Temperature;
 
             _initialized = OnFlightStart(frame, _partScript);
         }
