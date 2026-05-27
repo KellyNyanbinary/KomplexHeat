@@ -1,3 +1,4 @@
+using System;
 using Assets.Scripts.Craft.Parts;
 using HarmonyLib;
 using ModApi.Common;
@@ -7,6 +8,7 @@ using ModApi.Scenes;
 using ModApi.Scenes.Events;
 using UnityEngine;
 using Assembly = System.Reflection.Assembly;
+using Object = UnityEngine.Object;
 
 namespace KomplexHeat
 {
@@ -63,8 +65,7 @@ namespace KomplexHeat
         /// </summary>
         protected override void OnModInitialized()
         {
-            Debug.Log(
-                $"Mod Initialized: {ModInfo.Name} - {ModInfo.Author} - {ModInfo.Version} - {ModInfo.LastUpdated}");
+            Log($"Mod Initialized: {ModInfo.Name} - {ModInfo.Author} - {ModInfo.Version} - {ModInfo.LastUpdated}");
 
             new Harmony(ModInfo.Name).PatchAll(Assembly.GetExecutingAssembly());
 
@@ -80,7 +81,6 @@ namespace KomplexHeat
         {
             if (e.Scene != SceneNames.Flight) return;
 
-            new GameObject("KomplexHeat_HeatController").AddComponent<HeatController>();
             AttachVizzyHeatSources(Game.Instance.FlightScene.CraftNode.CraftScript);
             // else if (e.Scene == SceneNames.Menu)
             // {
@@ -99,7 +99,14 @@ namespace KomplexHeat
             {
                 if (!partScript.HasFlightProgram || partScript.GetComponent<VizzyHeatSource>() != null) continue;
 
-                partScript.gameObject.AddComponent<VizzyHeatSource>();
+                try
+                {
+                    partScript.gameObject.AddComponent<VizzyHeatSource>();
+                }
+                catch (Exception e)
+                {
+                    LogError($"Failed to add VizzyHeatSource to part {partScript.name}: {e}");
+                }
             }
         }
     }
