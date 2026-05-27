@@ -26,11 +26,6 @@ namespace KomplexHeat
         public float SpecificHeat { get; set; } = 897f; // https://en.wikipedia.org/wiki/6061_aluminium_alloy
 
         /// <summary>
-        ///     The heat transfer coefficient of the interface between the core and the part's skin in W/(m^2 K).
-        /// </summary>
-        public float HeatTransferCoefficient { get; set; }
-
-        /// <summary>
         ///     The temperature of the core in Kelvin.
         /// </summary>
         public float Temperature { get; set; } = 288.706f; // default temperature of parts in the game 

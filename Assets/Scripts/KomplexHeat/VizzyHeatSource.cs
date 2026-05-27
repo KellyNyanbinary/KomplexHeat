@@ -80,7 +80,6 @@ namespace KomplexHeat
 
             _heatCore = gameObject.AddComponent<HeatCore>();
             _heatCore.ThermalMass = HeatCoreThermalMass;
-            _heatCore.HeatTransferCoefficient = InterfaceHeatTransferCoefficient;
 
             _initialized = true;
         }
@@ -114,7 +113,7 @@ namespace KomplexHeat
             var partSkinC = _partScript.ThermalMass * PartSpecificHeat;
 
             // Formula from https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling#Mathematical_formulation
-            var flux = _heatCore.HeatTransferCoefficient * (_heatCore.Temperature - _partScript.Temperature);
+            var flux = InterfaceHeatTransferCoefficient * (_heatCore.Temperature - _partScript.Temperature);
             HeatFlowRate = flux * _surfaceArea;
 
             // If part heat capacity is invalid, the equilibrium temperature is a meaningless value, so the flow rate
