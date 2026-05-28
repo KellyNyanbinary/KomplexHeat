@@ -5,6 +5,12 @@ using UnityEngine;
 
 namespace KomplexHeat
 {
+    /// <summary>
+    ///     Represents the base class for heat sources within the KomplexHeat framework.
+    ///     This abstract class provides core functionality for managing heat transfer
+    ///     behavior during flight within the game. Subclasses must implement specific
+    ///     properties and behaviors to define the heat source characteristics.
+    /// </summary>
     public abstract class HeatSourceBase : MonoBehaviourBase, IFlightStart, IFlightFixedUpdate, IFlightFixedUpdateWarp
     {
         private const float PartSpecificHeat = 921f; // hardcoded in DragPhysics.CalculateConvectionHeat
