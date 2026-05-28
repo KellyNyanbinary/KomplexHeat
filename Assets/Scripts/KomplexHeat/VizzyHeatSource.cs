@@ -13,46 +13,54 @@ namespace KomplexHeat
     ///         The game tracks power consumed by a running <see cref="FlightProgramScript" /> in a private
     ///         <c>_powerConsumption</c> field. Because no public API exposes the per-frame consumed value,
     ///         this class resolves and caches the field via reflection in <see cref="IFlightStart.FlightStart" /> and
-    ///         reads it each tick, forwarding the result to <see cref="HeatController.AddHeat" />.
+    ///         reads it each tick, forwarding the result to <see cref="HeatCore.AddHeatPower" />.
     ///     </para>
     /// </summary>
-    public class VizzyHeatSource : MonoBehaviourBase, IFlightStart, IFlightFixedUpdate, IFlightFixedUpdateWarp
+    public class VizzyHeatSource : HeatSourceBase
     {
-        private const float PowerMultiplier = 1000f; // The game uses kiloWatts, but we use Watts
+        private const float PowerMultiplier = 1000f; // The game uses kilowatts, but we use Watts
+        private const string PowerConsumptionFieldName = "_powerConsumption";
         private FlightProgramScript _flightProgramScript;
-        private PartScript _partScript;
         private FieldInfo _powerConsumptionField;
 
-        void IFlightFixedUpdate.FlightFixedUpdate(in FlightFrameData frame) => ApplyHeat(frame);
-        void IFlightFixedUpdateWarp.FlightFixedUpdateWarp(in FlightFrameData frame) => ApplyHeat(frame);
+        /// <summary>
+        ///     HeatCore thermal mass of a processor and heat sink.
+        /// </summary>
+        protected override float HeatCoreThermalMass => 0.5f;
 
-        void IFlightStart.FlightStart(in FlightFrameData frame)
+        /// <summary>
+        ///     Heat transfer coefficient of the interface between the flight computer PCB+heatsink assembly and the
+        ///     part's skin in W/(m^2 K). Vibe-tuned value for a typical mounted PCB.
+        /// </summary>
+        protected override float HeatTransferCoefficient => 500f;
+
+        protected override bool OnFlightStart(in FlightFrameData frame, PartScript partScript)
         {
-            _partScript = GetComponentInParent<PartScript>();
-            _flightProgramScript = _partScript?.GetModifier<FlightProgramScript>();
-            _powerConsumptionField = _flightProgramScript?.GetType()
-                .GetField("_powerConsumption", BindingFlags.NonPublic | BindingFlags.Instance);
+            _flightProgramScript = partScript.GetModifier<FlightProgramScript>();
+            if (_flightProgramScript == null) return false;
 
-            if (_flightProgramScript == null) return;
-
+            _powerConsumptionField =
+                ReflectionHelper.FindField(_flightProgramScript.GetType(), PowerConsumptionFieldName);
             if (_powerConsumptionField == null)
                 throw new InvalidOperationException(
-                    $"Could not find _powerConsumption field in {_flightProgramScript.GetType().FullName}.");
+                    $"Could not find {PowerConsumptionFieldName} field in {_flightProgramScript.GetType().FullName}.");
 
             if (_powerConsumptionField.FieldType != typeof(float))
                 throw new InvalidOperationException(
-                    $"Expected _powerConsumption to be a float but found {_powerConsumptionField.FieldType} in " +
+                    $"Expected {PowerConsumptionFieldName} to be a float but found " +
+                    $"{_powerConsumptionField.FieldType.FullName} in " +
                     $"{_flightProgramScript.GetType().FullName}.");
+
+            return true;
         }
 
-        private void ApplyHeat(in FlightFrameData frame)
+        protected override void ApplyHeat()
         {
-            if (_flightProgramScript == null || _flightProgramScript.FlightProgram == null)
+            if (_flightProgramScript.FlightProgram == null) // Vizzy script is stopped/paused
                 return;
 
             var powerConsumption = (float)_powerConsumptionField.GetValue(_flightProgramScript) * PowerMultiplier;
-
-            HeatController.AddHeat(_partScript, powerConsumption);
+            AddHeatPower(powerConsumption);
         }
     }
 }
