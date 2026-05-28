@@ -124,7 +124,7 @@ namespace KomplexHeat
             var selectedPart = Game.Instance.FlightScene?.ViewManager?.GameView?.SelectedPart;
             var partScript = selectedPart?.GameObject.GetComponent<PartScript>();
             var heatCore = partScript?.GetComponent<HeatCore>();
-            var vizzyHeatSource = partScript?.GetComponent<VizzyHeatSource>();
+            var heatSource = partScript?.GetComponent<HeatSourceBase>();
 
             if (heatCore == null) return;
 
@@ -132,10 +132,10 @@ namespace KomplexHeat
             request.Model.AddGroup(group, 1);
 
             group.Add(new TextModel("Core Temp", () => Units.GetTemperatureString(heatCore.Temperature)));
-            if (vizzyHeatSource != null)
+            if (heatSource != null)
                 group.Add(new TextModel(
                     "Heat Flow Rate",
-                    () => $"{vizzyHeatSource.HeatFlowRate:F4} W",
+                    () => $"{heatSource.HeatFlowRate:F4} W",
                     tooltip:
                     "Heat flowing from core to skin. Positive = core heating skin, negative = skin heating core."));
         }
