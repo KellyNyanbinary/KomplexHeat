@@ -26,7 +26,7 @@ namespace KomplexHeat
         /// <summary>
         ///     HeatCore thermal mass of a processor and heat sink.
         /// </summary>
-        protected override float HeatCoreThermalMass => 0.5f;
+        protected override float HeatCoreThermalMassAbsolute => 0.5f;
 
         /// <summary>
         ///     Heat transfer coefficient of the interface between the flight computer PCB+heatsink assembly and the

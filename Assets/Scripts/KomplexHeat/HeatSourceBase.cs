@@ -34,10 +34,16 @@ namespace KomplexHeat
         protected abstract float HeatTransferCoefficient { get; }
 
         /// <summary>
+        ///     The ratio of the HeatCore's thermal mass relative to the part's dry mass. If null,
+        ///     <see cref="HeatCoreThermalMassAbsolute" /> is used instead.
+        /// </summary>
+        protected virtual float? HeatCoreThermalMassRatio { get; }
+
+        /// <summary>
         ///     The thermal mass of the HeatCore in kg.
         /// </summary>
-        protected abstract float HeatCoreThermalMass { get; }
-
+        protected abstract float HeatCoreThermalMassAbsolute { get; }
+        
         /// <summary>
         ///     The heat flow rate from the core to the part's skin in the last tick, in watts.
         ///     Positive means heat is flowing from core to skin.
@@ -58,7 +64,9 @@ namespace KomplexHeat
 
             // HeatCore may end up orphaned if the subclass failed on OnFlightStart(), but that's an accepted tradeoff.
             _heatCore = gameObject.AddComponent<HeatCore>();
-            _heatCore.ThermalMass = HeatCoreThermalMass;
+            _heatCore.ThermalMass = HeatCoreThermalMassRatio.HasValue
+                ? HeatCoreThermalMassRatio.Value * _partScript.Data.PartMass.Dry
+                : HeatCoreThermalMassAbsolute;
             _heatCore.Temperature = _partScript.Temperature;
 
             _initialized = OnFlightStart(frame, _partScript);
