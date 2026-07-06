@@ -13,10 +13,8 @@
     "precompiledReferences": [
         "Jundroo.ModTools.Core.dll",
         "Jundroo.ModTools.dll",
-        "Jundroo.Packages.dll",
         "ModApi.Core.dll",
         "ModApi.dll",
-        "Packages.dll",
         "SimpleRockets2.dll",
         "0Harmony.dll",
         "XmlLayout.dll",

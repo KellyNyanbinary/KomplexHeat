@@ -15,7 +15,6 @@ MonoBehaviour:
   _assemblies:
   - 0Harmony.dll
   - Jundroo.ModTools.dll
-  - Newtonsoft.Json.dll
   - Jundroo.ModTools.Core.dll
   - KomplexHeat.dll
   _author: KellyNyanbinary
