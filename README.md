@@ -51,7 +51,7 @@ This project’s source code is licensed under the [MIT License](LICENSE).
     2. Copy the file `net472/0Harmony.dll` into `Assets/Plugins/Harmony`.
     3. Optionally, you may also include `net472/0Harmony.xml` in `Assets/Plugins/Harmony`.
     4. Return to the Unity Editor, and it should automatically begin importing the plugin.
-6. In Unity, select `Assets/KomplexHeat.asmdef`. In the Inspector, enable "Override References" and add all of the above DLLs plus `0Harmony` under "Assembly References". Click "Apply".
+6. In Unity, select `Assets/KomplexHeat.asmdef`. In the Inspector, enable "Override References" and add `0Harmony.dll` to "Assembly References". Click "Apply".
 7. (Optional) Decompile the game assemblies for reference. Redo this every time the game updates.
     1. Install [ILSpy](https://github.com/icsharpcode/ILSpy). This project uses the `ilspycmd` command-line tool:
         ```
