@@ -14,8 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _assemblies:
   - 0Harmony.dll
-  - Jundroo.ModTools.dll
-  - Jundroo.ModTools.Core.dll
   - KomplexHeat.dll
   _author: KellyNyanbinary
   _description: KomplexHeat is a mod that expands the JNO's heat system.
