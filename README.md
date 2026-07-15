@@ -44,7 +44,7 @@ This project’s source code is licensed under the [MIT License](LICENSE).
 2. [Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the KomplexHeat repository.
 3. Open the repository as a Unity Project.
 4. Follow the JNO modding guide to import the JNO mod tools.
-    1. In Unity, Assets → Import Package → Custom Package, and import the mod tools at `JNO installation directory/ModTools/SimpleRockets2_ModTools.unitypackage`. The default location for this on Windows is `C:\Program Files (x86)\Steam\steamapps\common\SimpleRockets2\ModTools\SimpleRockets2_ModTools.unitypackage`.
+    1. In Unity, Assets → Import Package → Custom Package, and import the mod tools at `JNO installation directory/ModTools/SimpleRockets2_ModTools.unitypackage`. The default location for this on Windows is `C:\Program Files (x86)\Steam\steamapps\common\SimpleRockets2\ModTools\SimpleRockets2_ModTools.unitypackage`. The default location for this on macOS is `~/Library/Application Support/Steam/steamapps/common/SimpleRockets2/ModTools/SimpleRockets2_ModTools.unitypackage`.
     2. Initialize the mod in Unity via SimpleRockets 2 → Mod Builder Window → Start Creating Mod.
 5. Install the Harmony Unity plugin.
     1. Download the newest "Fat" version of the [Harmony plugin](https://github.com/pardeike/Harmony/releases).
@@ -53,16 +53,44 @@ This project’s source code is licensed under the [MIT License](LICENSE).
     4. Return to the Unity Editor, and it should automatically begin importing the plugin.
 6. In Unity, select `Assets/KomplexHeat.asmdef`. In the Inspector, enable "Override References" and add `0Harmony.dll` to "Assembly References". Click "Apply".
 7. (Optional) Decompile the game assemblies for reference. Redo this every time the game updates.
-    1. Install [ILSpy](https://github.com/icsharpcode/ILSpy). This project uses the `ilspycmd` command-line tool:
+    1. Make sure .NET 10 SDK is installed. Install it via one of the following methods:
+        - The [official .NET website](https://dotnet.microsoft.com/en-us/download/dotnet),
+        - Winget on Windows via `winget install Microsoft.DotNet.SDK.10`,
+        - or [Homebrew](https://docs.brew.sh/Installation) on macOS via `brew install dotnet`.
+    2. This project uses the `ilspycmd` command-line tool for decompilation. On both Windows and macOS:
         ```
-        dotnet tool install -g ilspycmd
+        dotnet tool install --global ilspycmd
         ```
-    2. Decompile each assembly into its own project under `Decompiled/<AssemblyName>/`, using `-p` to generate the per-namespace project layout. Run from the repository root:
+    3. In your shell (terminal), set `ASSEMBLY_PATH` to the path to the game assemblies:
+
+        On Windows PowerShell:
+        ```PowerShell
+        $env:ASSEMBLY_PATH = "C:\Program Files (x86)\Steam\steamapps\common\SimpleRockets2\SimpleRockets2_Data\Managed"
         ```
-        ilspycmd -p -o Decompiled/SimpleRockets2         Assets/Plugins/Juno/SimpleRockets2.dll
-        ilspycmd -p -o Decompiled/ModApi                 Assets/Plugins/Juno/ModApi.dll
-        ilspycmd -p -o Decompiled/ModApi.Core            Assets/Plugins/Juno/ModApi.Core.dll
-        ilspycmd -p -o Decompiled/Jundroo.ModTools       Assets/Plugins/Juno/Jundroo.ModTools.dll
-        ilspycmd -p -o Decompiled/Jundroo.ModTools.Core  Assets/Plugins/Juno/Jundroo.ModTools.Core.dll
-        ilspycmd -p -o Decompiled/XmlLayout              Assets/Plugins/Juno/XmlLayout.dll
+
+        On macOS Zsh:
+        ```zsh
+        export ASSEMBLY_PATH="$HOME/Library/Application Support/Steam/steamapps/common/SimpleRockets2/SimpleRockets2.app/Contents/Resources/Data/Managed"
+        ```
+        Update this path if the game is installed elsewhere.
+    4. From the repository root, run the commands for your operating system to decompile each assembly into a separate folder under `Decompiled`:
+
+        On Windows PowerShell:
+        ```PowerShell
+        ilspycmd -p -o Decompiled\SimpleRockets2        "$env:ASSEMBLY_PATH\SimpleRockets2.dll"
+        ilspycmd -p -o Decompiled\ModApi                "$env:ASSEMBLY_PATH\ModApi.dll"
+        ilspycmd -p -o Decompiled\ModApi.Core           "$env:ASSEMBLY_PATH\ModApi.Core.dll"
+        ilspycmd -p -o Decompiled\Jundroo.ModTools      "$env:ASSEMBLY_PATH\Jundroo.ModTools.dll"
+        ilspycmd -p -o Decompiled\Jundroo.ModTools.Core "$env:ASSEMBLY_PATH\Jundroo.ModTools.Core.dll"
+        ilspycmd -p -o Decompiled\XmlLayout             "$env:ASSEMBLY_PATH\XmlLayout.dll"
+        ```
+
+        On macOS Zsh:
+        ```zsh
+        ilspycmd -p -o Decompiled/SimpleRockets2        "${ASSEMBLY_PATH}/SimpleRockets2.dll"
+        ilspycmd -p -o Decompiled/ModApi                "${ASSEMBLY_PATH}/ModApi.dll"
+        ilspycmd -p -o Decompiled/ModApi.Core           "${ASSEMBLY_PATH}/ModApi.Core.dll"
+        ilspycmd -p -o Decompiled/Jundroo.ModTools      "${ASSEMBLY_PATH}/Jundroo.ModTools.dll"
+        ilspycmd -p -o Decompiled/Jundroo.ModTools.Core "${ASSEMBLY_PATH}/Jundroo.ModTools.Core.dll"
+        ilspycmd -p -o Decompiled/XmlLayout             "${ASSEMBLY_PATH}/XmlLayout.dll"
         ```
