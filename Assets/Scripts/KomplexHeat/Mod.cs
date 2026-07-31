@@ -15,25 +15,25 @@ using Object = UnityEngine.Object;
 namespace KomplexHeat
 {
     /// <summary>
-    ///     A singleton object representing this mod that is instantiated and initialize when the mod is loaded.
+    /// A singleton object representing this mod that is instantiated and initialize when the mod is loaded.
     /// </summary>
     public class Mod : GameMod
     {
         /// <summary>
-        ///     Prevents a default instance of the <see cref="Mod" /> class from being created.
+        /// Prevents a default instance of the <see cref="Mod" /> class from being created.
         /// </summary>
         private Mod()
         {
         }
 
         /// <summary>
-        ///     Gets the singleton instance of the mod object.
+        /// Gets the singleton instance of the mod object.
         /// </summary>
         /// <value>The singleton instance of the mod object.</value>
         public static Mod Instance { get; } = GetModInstance<Mod>();
 
         /// <summary>
-        ///     Logs the specified message.
+        /// Logs the specified message.
         /// </summary>
         /// <param name="message">The message to log.</param>
         /// <param name="context">The context.</param>
@@ -43,7 +43,7 @@ namespace KomplexHeat
         }
 
         /// <summary>
-        ///     Logs the specified error.
+        /// Logs the specified error.
         /// </summary>
         /// <param name="error">The error to log.</param>
         /// <param name="context">The context.</param>
@@ -53,7 +53,7 @@ namespace KomplexHeat
         }
 
         /// <summary>
-        ///     Logs the specified warning.
+        /// Logs the specified warning.
         /// </summary>
         /// <param name="warning">The warning to log.</param>
         /// <param name="context">The context.</param>
@@ -63,7 +63,7 @@ namespace KomplexHeat
         }
 
         /// <summary>
-        ///     Called when the mod is initialized.
+        /// Called when the mod is initialized.
         /// </summary>
         protected override void OnModInitialized()
         {
@@ -77,7 +77,7 @@ namespace KomplexHeat
         }
 
         /// <summary>
-        ///     Called when the scene is loaded.
+        /// Called when the scene is loaded.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="ModApi.Scenes.Events.SceneEventArgs" /> instance containing the event data.</param>
@@ -115,8 +115,8 @@ namespace KomplexHeat
         }
 
         /// <summary>
-        ///     Adds a custom inspector panel for the selected part in the build mode.
-        ///     Displays details from the <see cref="KomplexHeat" /> components of the selected part if available.
+        /// Adds a custom inspector panel for the selected part in the build mode.
+        /// Displays details from the <see cref="KomplexHeat" /> components of the selected part if available.
         /// </summary>
         /// <param name="request">The build inspector panel request containing the model to which custom panels can be added.</param>
         private static void OnBuildPartInspector(BuildInspectorPanelRequest request)

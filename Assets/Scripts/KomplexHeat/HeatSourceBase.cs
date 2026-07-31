@@ -6,20 +6,20 @@ using UnityEngine;
 namespace KomplexHeat
 {
     /// <summary>
-    ///     Represents the base class for heat sources within the KomplexHeat framework.
-    ///     This abstract class provides core functionality for managing heat transfer
-    ///     behavior during flight within the game. Subclasses must implement specific
-    ///     properties and behaviors to define the heat source characteristics.
+    /// Represents the base class for heat sources within the KomplexHeat framework.
+    /// This abstract class provides core functionality for managing heat transfer
+    /// behavior during flight within the game. Subclasses must implement specific
+    /// properties and behaviors to define the heat source characteristics.
     /// </summary>
     public abstract class HeatSourceBase : MonoBehaviourBase, IFlightStart, IFlightFixedUpdate, IFlightFixedUpdateWarp
     {
         private const float PartSpecificHeat = 921f; // hardcoded in DragPhysics.CalculateConvectionHeat
 
         /// <summary>
-        ///     The areal density of a part's aluminum wall in kg/m^2. Derived with these parameters:
-        ///     1. An empty 1 m^3 cube fuel tank in JNO is 75 kg.
-        ///     2. It has a surface area of 6 m^2.
-        ///     3. Its areal density is therefore 75 kg / 6 m^2 = 12.5 kg/m^2.
+        /// The areal density of a part's aluminum wall in kg/m^2. Derived with these parameters:
+        /// 1. An empty 1 m^3 cube fuel tank in JNO is 75 kg.
+        /// 2. It has a surface area of 6 m^2.
+        /// 3. Its areal density is therefore 75 kg / 6 m^2 = 12.5 kg/m^2.
         /// </summary>
         private const float ArealDensity = 12.5f;
 
@@ -29,18 +29,18 @@ namespace KomplexHeat
         private float _surfaceArea;
 
         /// <summary>
-        ///     Heat transfer coefficient of the interface between the HeatCore and the part's skin in W/(m^2 K).
+        /// Heat transfer coefficient of the interface between the HeatCore and the part's skin in W/(m^2 K).
         /// </summary>
         protected abstract float HeatTransferCoefficient { get; }
 
         /// <summary>
-        ///     The thermal mass of the HeatCore in kg.
+        /// The thermal mass of the HeatCore in kg.
         /// </summary>
         protected abstract float HeatCoreThermalMass { get; }
 
         /// <summary>
-        ///     The heat flow rate from the core to the part's skin in the last tick, in watts.
-        ///     Positive means heat is flowing from core to skin.
+        /// The heat flow rate from the core to the part's skin in the last tick, in watts.
+        /// Positive means heat is flowing from core to skin.
         /// </summary>
         public float HeatFlowRate { get; private set; }
 
@@ -77,7 +77,7 @@ namespace KomplexHeat
         }
 
         /// <summary>
-        ///     Applies Newton's law of cooling to the HeatCore and the part.
+        /// Applies Newton's law of cooling to the HeatCore and the part.
         /// </summary>
         private void ApplyConduction(in FlightFrameData frame)
         {

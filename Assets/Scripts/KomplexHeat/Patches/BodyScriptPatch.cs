@@ -9,34 +9,34 @@ using HarmonyLib;
 namespace KomplexHeat.Patches
 {
     /// <summary>
-    ///     Harmony transpiler patch for <see cref="BodyScript.UpdatePartTemperatures" />.
-    ///     By default, the game hard-resets any occluded part's temperature to 288.706 K every tick, preventing heat
-    ///     from accumulating. This conflicts with KomplexHeat's heat accumulation logic, so this patch removes that
-    ///     assignment by surgically deleting the four IL instructions that implement it:
-    ///     <code>
-    ///     IL_0149: ldloc.s      partScript
-    ///     IL_014b: ldc.r4       288.706
-    ///     IL_0150: callvirt     instance void Assets.Scripts.Craft.Parts.PartScript::set_Temperature(float32)
-    ///     IL_0155: br           IL_03bb
-    ///     </code>
-    ///     The surrounding control flow (the <c>IsOccluded</c> check and the non-occluded branch) is left intact,
-    ///     so occluded parts are no longer reset and no longer skipped, allowing
-    ///     <see cref="HeatController" /> to manage their temperature.
-    ///     The surrounding decompiled code by ILSpy for reference:
-    ///     <code>
-    ///     foreach (PartData part in Data.Parts)
+    /// Harmony transpiler patch for <see cref="BodyScript.UpdatePartTemperatures" />.
+    /// By default, the game hard-resets any occluded part's temperature to 288.706 K every tick, preventing heat
+    /// from accumulating. This conflicts with KomplexHeat's heat accumulation logic, so this patch removes that
+    /// assignment by surgically deleting the four IL instructions that implement it:
+    /// <code>
+    /// IL_0149: ldloc.s      partScript
+    /// IL_014b: ldc.r4       288.706
+    /// IL_0150: callvirt     instance void Assets.Scripts.Craft.Parts.PartScript::set_Temperature(float32)
+    /// IL_0155: br           IL_03bb
+    /// </code>
+    /// The surrounding control flow (the <c>IsOccluded</c> check and the non-occluded branch) is left intact,
+    /// so occluded parts are no longer reset and no longer skipped, allowing
+    /// <see cref="HeatController" /> to manage their temperature.
+    /// The surrounding decompiled code by ILSpy for reference:
+    /// <code>
+    /// foreach (PartData part in Data.Parts)
+    /// {
+    ///     PartScript partScript = (PartScript)part.PartScript;
+    ///     if (partScript.Data.PartDrag.IsOccluded)
     ///     {
-    ///         PartScript partScript = (PartScript)part.PartScript;
-    ///         if (partScript.Data.PartDrag.IsOccluded)
-    ///         {
-    ///             partScript.Temperature = 288.706f;
-    ///             continue;
-    ///         }
-    ///         float temperature = partScript.Temperature;
-    ///         ...
+    ///         partScript.Temperature = 288.706f;
+    ///         continue;
     ///     }
-    ///     </code>
-    ///     We're getting rid of the <c>partScript.Temperature = 288.706f;</c> and <c>continue;</c>.
+    ///     float temperature = partScript.Temperature;
+    ///     ...
+    /// }
+    /// </code>
+    /// We're getting rid of the <c>partScript.Temperature = 288.706f;</c> and <c>continue;</c>.
     /// </summary>
     [HarmonyPatch(typeof(BodyScript), "UpdatePartTemperatures")] // private, so nameof won't work
     internal static class BodyScriptPatch

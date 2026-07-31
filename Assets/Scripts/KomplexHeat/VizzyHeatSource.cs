@@ -8,13 +8,13 @@ using ModApi.GameLoop.Interfaces;
 namespace KomplexHeat
 {
     /// <summary>
-    ///     Flight behavior that converts a Vizzy program's power consumption into heat on its host part each tick.
-    ///     <para>
-    ///         The game tracks power consumed by a running <see cref="FlightProgramScript" /> in a private
-    ///         <c>_powerConsumption</c> field. Because no public API exposes the per-frame consumed value,
-    ///         this class resolves and caches the field via reflection in <see cref="IFlightStart.FlightStart" /> and
-    ///         reads it each tick, forwarding the result to <see cref="HeatCore.AddHeatPower" />.
-    ///     </para>
+    /// Flight behavior that converts a Vizzy program's power consumption into heat on its host part each tick.
+    /// <para>
+    /// The game tracks power consumed by a running <see cref="FlightProgramScript" /> in a private
+    /// <c>_powerConsumption</c> field. Because no public API exposes the per-frame consumed value,
+    /// this class resolves and caches the field via reflection in <see cref="IFlightStart.FlightStart" /> and
+    /// reads it each tick, forwarding the result to <see cref="HeatCore.AddHeatPower" />.
+    /// </para>
     /// </summary>
     public class VizzyHeatSource : HeatSourceBase
     {
@@ -24,13 +24,13 @@ namespace KomplexHeat
         private FieldInfo _powerConsumptionField;
 
         /// <summary>
-        ///     HeatCore thermal mass of a processor and heat sink.
+        /// HeatCore thermal mass of a processor and heat sink.
         /// </summary>
         protected override float HeatCoreThermalMass => 0.5f;
 
         /// <summary>
-        ///     Heat transfer coefficient of the interface between the flight computer PCB+heatsink assembly and the
-        ///     part's skin in W/(m^2 K). Vibe-tuned value for a typical mounted PCB.
+        /// Heat transfer coefficient of the interface between the flight computer PCB+heatsink assembly and the
+        /// part's skin in W/(m^2 K). Vibe-tuned value for a typical mounted PCB.
         /// </summary>
         protected override float HeatTransferCoefficient => 500f;
 
