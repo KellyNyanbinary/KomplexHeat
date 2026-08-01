@@ -5,11 +5,16 @@ using System.Reflection.Emit;
 using Assets.Scripts.Craft;
 using Assets.Scripts.Craft.Parts;
 using HarmonyLib;
+using JetBrains.Annotations;
+using KomplexHeat;
 
-namespace KomplexHeat.Patches
+namespace Patches
 {
     /// <summary>
     /// Harmony transpiler patch for <see cref="BodyScript.UpdatePartTemperatures" />.
+    /// </summary>
+    /// <remarks>
+    /// <para>
     /// By default, the game hard-resets any occluded part's temperature to 288.706 K every tick, preventing heat
     /// from accumulating. This conflicts with KomplexHeat's heat accumulation logic, so this patch removes that
     /// assignment by surgically deleting the four IL instructions that implement it:
@@ -21,7 +26,9 @@ namespace KomplexHeat.Patches
     /// </code>
     /// The surrounding control flow (the <c>IsOccluded</c> check and the non-occluded branch) is left intact,
     /// so occluded parts are no longer reset and no longer skipped, allowing
-    /// <see cref="HeatController" /> to manage their temperature.
+    /// <see cref="HeatSourceBase" /> to manage their temperature.
+    /// </para>
+    /// <para>
     /// The surrounding decompiled code by ILSpy for reference:
     /// <code>
     /// foreach (PartData part in Data.Parts)
@@ -37,13 +44,16 @@ namespace KomplexHeat.Patches
     /// }
     /// </code>
     /// We're getting rid of the <c>partScript.Temperature = 288.706f;</c> and <c>continue;</c>.
-    /// </summary>
+    /// </para>
+    /// </remarks>
+    [UsedImplicitly]
     [HarmonyPatch(typeof(BodyScript), "UpdatePartTemperatures")] // private, so nameof won't work
     internal static class BodyScriptPatch
     {
         private const float OccludedTemperature = 288.706f; // what BodyScript hard-resets occluded parts to
 
         // TODO: write Unity EditMode NUnit tests for Transpiler
+        [UsedImplicitly]
         [HarmonyTranspiler]
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {

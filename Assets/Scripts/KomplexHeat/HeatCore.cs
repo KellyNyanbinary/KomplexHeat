@@ -6,11 +6,11 @@ namespace KomplexHeat
     /// <summary>
     /// The thermal core of a part, responsible for accumulating heat from various sources and applying it to the
     /// core temperature each tick.
-    /// <para>
+    /// </summary>
+    /// <remarks>
     /// The thermal core is a separate thermal entity from the part's actual in-game temperature. The part's
     /// in-game temperature is considered the skin temperature by KomplexHeat.
-    /// </para>
-    /// </summary>
+    /// </remarks>
     public class HeatCore : MonoBehaviourBase, IFlightFixedUpdate, IFlightFixedUpdateWarp
     {
         private float _pendingHeatPower;

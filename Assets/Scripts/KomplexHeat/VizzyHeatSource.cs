@@ -9,13 +9,13 @@ namespace KomplexHeat
 {
     /// <summary>
     /// Flight behavior that converts a Vizzy program's power consumption into heat on its host part each tick.
-    /// <para>
+    /// </summary>
+    /// <remarks>
     /// The game tracks power consumed by a running <see cref="FlightProgramScript" /> in a private
     /// <c>_powerConsumption</c> field. Because no public API exposes the per-frame consumed value,
     /// this class resolves and caches the field via reflection in <see cref="IFlightStart.FlightStart" /> and
     /// reads it each tick, forwarding the result to <see cref="HeatCore.AddHeatPower" />.
-    /// </para>
-    /// </summary>
+    /// </remarks>
     public class VizzyHeatSource : HeatSourceBase
     {
         private const float PowerMultiplier = 1000f; // The game uses kilowatts, but we use Watts
@@ -37,11 +37,11 @@ namespace KomplexHeat
         protected override bool OnFlightStart(in FlightFrameData frame, PartScript partScript)
         {
             _flightProgramScript = partScript.GetModifier<FlightProgramScript>();
-            if (_flightProgramScript == null) return false;
+            if (_flightProgramScript is null) return false;
 
             _powerConsumptionField =
                 ReflectionHelper.FindField(_flightProgramScript.GetType(), PowerConsumptionFieldName);
-            if (_powerConsumptionField == null)
+            if (_powerConsumptionField is null)
                 throw new InvalidOperationException(
                     $"Could not find {PowerConsumptionFieldName} field in {_flightProgramScript.GetType().FullName}.");
 
@@ -56,7 +56,7 @@ namespace KomplexHeat
 
         protected override void ApplyHeat()
         {
-            if (_flightProgramScript.FlightProgram == null) // Vizzy script is stopped/paused
+            if (_flightProgramScript.FlightProgram is null) // Vizzy script is stopped/paused
                 return;
 
             var powerConsumption = (float)_powerConsumptionField.GetValue(_flightProgramScript) * PowerMultiplier;
