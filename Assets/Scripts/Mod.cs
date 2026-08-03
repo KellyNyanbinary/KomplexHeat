@@ -105,6 +105,9 @@ public class Mod : GameMod
         {
             if (partScript.HasFlightProgram)
                 TryAddHeatSource<VizzyHeatSource>(partScript);
+
+            if (partScript.GetModifier<ElectricMotorScript>() != null)
+                TryAddHeatSource<ElectricMotorHeatSource>(partScript);
         }
     }
 
@@ -139,6 +142,13 @@ public class Mod : GameMod
         request.Model.AddGroup(group, 1);
 
         group.Add(new TextModel("Core Temp", () => Units.GetTemperatureString(heatCore.Temperature)));
+        group.Add(new TextModel(
+            "Heat Core Thermal Mass",
+            () => Units.GetMassString(heatCore.ThermalMass * ModApi.Constants.MassScale)));
+        group.Add(new TextModel(
+            "Heat Generation Rate",
+            () => Units.GetPowerString(heatSource.HeatGenerationRate),
+            tooltip: "Heat generation rate from this source dumped into the core."));
         group.Add(new TextModel(
             "Heat Flow Rate",
             () => Units.GetPowerString(heatSource.HeatFlowRate),
