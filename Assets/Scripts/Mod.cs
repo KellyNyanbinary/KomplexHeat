@@ -41,7 +41,7 @@ public class Mod : GameMod
     /// <param name="context">The context.</param>
     public void Log(string message, Object context = null)
     {
-        Debug.Log($"{ModInfo.Name}: {message}", context);
+        Debug.Log($"[{ModInfo.Name}]: {message}", context);
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public class Mod : GameMod
     /// <param name="context">The context.</param>
     public void LogError(string error, Object context = null)
     {
-        Debug.LogError($"{ModInfo.Name}: {error}", context);
+        Debug.LogError($"[{ModInfo.Name}]: {error}", context);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public class Mod : GameMod
     /// <param name="context">The context.</param>
     public void LogWarning(string warning, Object context = null)
     {
-        Debug.LogWarning($"{ModInfo.Name}: {warning}", context);
+        Debug.LogWarning($"[{ModInfo.Name}]: {warning}", context);
     }
 
     /// <summary>
