@@ -136,7 +136,7 @@ public class Mod : GameMod
         var heatCore = partScript?.GetComponent<HeatCore>();
         var heatSource = partScript?.GetComponent<HeatSourceBase>();
 
-        if (heatCore == null) return;
+        if (heatCore == null || heatSource == null) return;
 
         var group = new GroupModel("Heat");
         request.Model.AddGroup(group, 1);
