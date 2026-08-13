@@ -23,7 +23,7 @@ namespace KomplexHeat
         /// <summary>
         /// The specific heat of the core in J/(kg K).
         /// </summary>
-        public float SpecificHeat { get; set; } = 897f; // https://en.wikipedia.org/wiki/6061_aluminium_alloy
+        public virtual float SpecificHeat { get; set; } = 897f; // https://en.wikipedia.org/wiki/6061_aluminium_alloy
 
         /// <summary>
         /// The temperature of the core in Kelvin.

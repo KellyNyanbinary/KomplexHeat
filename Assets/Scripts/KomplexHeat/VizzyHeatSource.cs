@@ -1,8 +1,6 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using Assets.Scripts.Craft.Parts;
 using Assets.Scripts.Craft.Parts.Modifiers;
-using ModApi.GameLoop;
 using ModApi.GameLoop.Interfaces;
 
 namespace KomplexHeat
@@ -26,7 +24,7 @@ namespace KomplexHeat
         /// <summary>
         /// HeatCore thermal mass of a processor and heat sink.
         /// </summary>
-        protected override float HeatCoreThermalMass => 0.5f;
+        protected override float GetHeatCoreThermalMass(float partMassDry) => 0.5f;
 
         /// <summary>
         /// Heat transfer coefficient of the interface between the flight computer PCB+heatsink assembly and the
@@ -34,24 +32,30 @@ namespace KomplexHeat
         /// </summary>
         protected override float HeatTransferCoefficient => 500f;
 
-        protected override bool OnFlightStart(in FlightFrameData frame, PartScript partScript)
+        protected override bool OnFlightStart(PartScript partScript)
         {
             _flightProgramScript = partScript.GetModifier<FlightProgramScript>();
-            if (_flightProgramScript is null) return false;
+            if (_flightProgramScript == null) return false;
 
             _powerConsumptionField =
                 ReflectionHelper.FindField(_flightProgramScript.GetType(), PowerConsumptionFieldName);
+
             if (_powerConsumptionField is null)
-                throw new InvalidOperationException(
-                    $"Could not find {PowerConsumptionFieldName} field in {_flightProgramScript.GetType().FullName}.");
+            {
+                Mod.Instance.LogError(
+                    $"Could not find {PowerConsumptionFieldName} field in {_flightProgramScript.GetType().FullName}" +
+                    $" on part {PartDescription}; " +
+                    "Vizzy heat disabled");
+                return false;
+            }
 
-            if (_powerConsumptionField.FieldType != typeof(float))
-                throw new InvalidOperationException(
-                    $"Expected {PowerConsumptionFieldName} to be a float but found " +
-                    $"{_powerConsumptionField.FieldType.FullName} in " +
-                    $"{_flightProgramScript.GetType().FullName}.");
+            if (_powerConsumptionField.FieldType == typeof(float)) return true;
 
-            return true;
+            Mod.Instance.LogError(
+                $"Expected {PowerConsumptionFieldName} to be a float but found " +
+                $"{_powerConsumptionField.FieldType.FullName} in {_flightProgramScript.GetType().FullName} " +
+                $"on part {PartDescription}; Vizzy heat disabled");
+            return false;
         }
 
         protected override void ApplyHeat()
@@ -60,7 +64,7 @@ namespace KomplexHeat
                 return;
 
             var powerConsumption = (float)_powerConsumptionField.GetValue(_flightProgramScript) * PowerMultiplier;
-            AddHeatPower(powerConsumption);
+            GenerateHeat(powerConsumption);
         }
     }
 }
